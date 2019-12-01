@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leyou.lmhitysu.item.specification.dao.ISpecificationMapper">
+    <!--Category-->
+    <resultMap id="specificationMap" type="com.leyou.lmhitysu.common.model.Specification">
+        <result property="categoryId" column="CATEGORY_ID"/>
+        <result property="specifications" column="SPECIFICATIONS"/>
+    </resultMap>
+    <sql id="specificationMapFields">
+        <![CDATA[
+            CATEGORY_ID,
+            SPECIFICATIONS
+        ]]>
+    </sql>
+    <select id="findByProperty" parameterType="java.util.Map" resultMap="specificationMap">
+        select <include refid="specificationMapFields"/>
+        from tb_specification
+        <where>
+            <if test="categoryId != null">
+                AND CATEGORY_ID = #{categoryId}
+            </if>
+            <if test="categoryIds != null">
+                AND CATEGORY_ID IN
+                <foreach collection="categoryIds" separator="," open="(" close=")" item="item">#{item}</foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

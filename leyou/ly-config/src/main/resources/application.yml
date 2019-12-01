@@ -1,0 +1,23 @@
+server:
+  port: 10011
+spring:
+  application:
+    name: ly-config
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: /home/liming/Desktop/configLY
+  rabbitmq:
+    host: 192.168.25.152
+    username: lmhitysu
+    password: 123456
+    virtual-host: lmVirtual
+
+management: #暴露触发消息总线的地址
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leyou.lmhitysu.order.dao.IOrderDetailMapper">
+    <resultMap id="orderDetail" type="com.leyou.lmhitysu.order.model.OrderDetail">
+        <result property="id" column="ID"/>
+        <result property="orderId" column="ORDER_ID"/>
+        <result property="skuId" column="SKU_ID"/>
+        <result property="num" column="NUM"/>
+        <result property="title" column="TITLE"/>
+        <result property="ownSpec" column="OWN_SPEC"/>
+        <result property="price" column="PRICE"/>
+        <result property="image" column="IMAGE"/>
+    </resultMap>
+    <sql id="orderDetailFields">
+        <![CDATA[
+        ID,
+        ORDER_ID,
+        SKU_ID,
+        NUM,
+        TITLE,
+        OWN_SPEC,
+        PRICE,
+        IMAGE
+        ]]>
+    </sql>
+    <insert id="insert" parameterType="com.leyou.lmhitysu.order.model.OrderDetail">
+        insert into tb_order_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="orderId !=null">
+                ORDER_ID,
+            </if>
+
+            <if test="skuId !=null">
+                SKU_ID,
+            </if>
+            <if test="num !=null">
+                NUM,
+            </if>
+            <if test="title !=null">
+                TITLE,
+            </if>
+            <if test="ownSpec !=null">
+                OWN_SPEC,
+            </if>
+            <if test="price !=null">
+                PRICE,
+            </if>
+            <if test="IMAGE !=null">
+                image,
+            </if>
+
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides="," >
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="orderId !=null">
+                #{orderId,jdbcType=BIGINT},
+            </if>
+            <if test="skuId !=null">
+                #{skuId,jdbcType=BIGINT},
+            </if>
+            <if test="num !=null">
+                #{num,jdbcType=TINYINT},
+            </if>
+            <if test="title !=null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="ownSpec !=null">
+                #{ownSpec,jdbcType=VARCHAR},
+            </if>
+            <if test="price !=null">
+                #{price,jdbcType=BIGINT},
+            </if>
+            <if test="image !=null">
+                #{image,jdbcType=VARCHAR},
+            </if>
+
+        </trim>
+    </insert>
+    <select id="findByProperty" parameterType="java.util.Map" resultMap="orderDetail">
+        select <include refid="orderDetailFields"/> from tb_order_detail
+        <where>
+            <if test="id != null">
+                AND ID = #{id}
+            </if>
+            <if test="orderId != null">
+                AND ORDER_ID = #{orderId}
+            </if>
+            <if test="skuId != null">
+                AND SKU_ID = #{skuId}
+            </if>
+            <if test="num != null">
+                AND NUM = #{num}
+            </if>
+            <if test="title != null">
+                AND TITLE = #{title}
+            </if>
+            <if test="ownSpec != null">
+                AND OWN_SPEC = #{ownSpec}
+            </if>
+            <if test="price != null">
+                AND PRICE =  #{price}
+            </if>
+            <if test="image != null">
+                AND IMAGE = #{image}
+            </if>
+        </where>
+        <if test="sortBy != null">
+            order by #{sortBy}
+        </if>
+        <if test="desc!=null and desc != false">
+            desc
+        </if>
+    </select>
+
+</mapper>

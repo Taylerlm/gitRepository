@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leyou.lmhitysu.order.dao.IOrderStatusMapper">
+    <resultMap id="orderStatus" type="com.leyou.lmhitysu.order.model.OrderStatus">
+        <result property="orderId" column="ORDER_ID"/>
+        <result property="status" column="STATUS"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="paymentTime" column="PAYMENT_TIME"/>
+        <result property="consignTime" column="CONSIGN_TIME"/>
+        <result property="endTime" column="END_TIME"/>
+        <result property="closeTime" column="CLOSE_TIME"/>
+        <result property="commentTime" column="COMMENT_TIME"/>
+    </resultMap>
+    <sql id="orderStatusFields">
+        <![CDATA[
+        ORDER_ID,
+        STATUS,
+        CREATE_TIME,
+        PAYMENT_TIME,
+        CONSIGN_TIME,
+        END_TIME,
+        CLOSE_TIME,
+        COMMENT_TIME
+        ]]>
+    </sql>
+    <insert id="insert" parameterType="com.leyou.lmhitysu.order.model.OrderStatus">
+        insert into tb_order_status
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                ORDER_ID,
+            </if>
+            <if test="status !=null">
+                STATUS,
+            </if>
+
+            <if test="createTime !=null">
+                CREATE_TIME,
+            </if>
+            <if test="paymentTime !=null">
+                PAYMENT_TIME,
+            </if>
+            <if test="consignTime !=null">
+                CONSIGN_TIME,
+            </if>
+            <if test="endTime !=null">
+                END_TIME,
+            </if>
+            <if test="closeTime !=null">
+                CLOSE_TIME,
+            </if>
+            <if test="commentTime !=null">
+                COMMENT_TIME,
+            </if>
+
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides="," >
+            <if test="orderId != null">
+                #{orderId,jdbcType=BIGINT},
+            </if>
+            <if test="status !=null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createTime !=null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="paymentTime !=null">
+                #{paymentTime,jdbcType=DATE},
+            </if>
+            <if test="consignTime !=null">
+                #{consignTime,jdbcType=DATE},
+            </if>
+            <if test="endTime !=null">
+                #{endTime,jdbcType=DATE},
+            </if>
+            <if test="closeTime !=null">
+                #{closeTime,jdbcType=DATE},
+            </if>
+            <if test="commentTime !=null">
+                #{commentTime,jdbcType=DATE},
+            </if>
+
+        </trim>
+    </insert>
+    <select id="findByProperty" parameterType="java.util.Map" resultMap="orderStatus">
+        select <include refid="orderStatusFields"/> from tb_order_status
+        <where>
+            <if test="orderId != null">
+                AND ORDER_ID = #{orderId}
+            </if>
+            <if test="status != null">
+                AND STATUS = #{status}
+            </if>
+            <if test="createTime != null">
+                AND CREATE_TIME = #{createTime}
+            </if>
+            <if test="paymentTime != null">
+                AND PAYMENT_TIME = #{paymentTime}
+            </if>
+            <if test="consignTime != null">
+                AND CONSIGN_TIME = #{consignTime}
+            </if>
+            <if test="endTime != null">
+                AND END_TIME = #{endTime}
+            </if>
+            <if test="closeTime != null">
+                AND CLOSE_TIME =  #{closeTime}
+            </if>
+            <if test="commentTime != null">
+                AND COMMENT_TIME = #{commentTime}
+            </if>
+        </where>
+        <if test="sortBy != null">
+            order by #{sortBy}
+        </if>
+        <if test="desc!=null and desc != false">
+            desc
+        </if>
+    </select>
+    <update id="update" parameterType="com.leyou.lmhitysu.order.model.OrderStatus">
+        update tb_order_status
+        <set>
+            <if test="status != null">
+                STATUS = #{status}
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime}
+            </if>
+            <if test="paymentTime != null">
+                PAYMENT_TIME = #{paymentTime}
+            </if>
+            <if test="consignTime != null">
+                CONSIGN_TIME = #{consignTime}
+            </if>
+            <if test="endTime != null">
+                END_TIME = #{endTime}
+            </if>
+            <if test="closeTime != null">
+                CLOSE_TIME =  #{closeTime}
+            </if>
+            <if test="commentTime != null">
+                COMMENT_TIME = #{commentTime}
+            </if>
+        </set>
+        <where>
+            <if test="orderId != null">
+                AND ORDER_ID = #{orderId}
+            </if>
+        </where>
+    </update>
+</mapper>

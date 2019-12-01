@@ -1,0 +1,34 @@
+server:
+  port: 8801
+spring:
+  application:
+    name: ly-cart
+  redis:
+    host: 192.168.25.152
+  rabbitmq:
+    host: 192.168.25.152
+    username: lmhitysu
+    password: 123456
+    virtual-host: lmVirtual
+    template:
+      retry:
+        enabled: true
+        initial-interval: 10000ms
+        max-interval: 21000ms
+        multiplier: 2
+    publisher-confirms: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8101/eureka
+    registry-fetch-interval-seconds: 5
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    hostname: ly-cart
+    instance-id: ${spring.application.name}:${server.port}
+# 授权属性配置
+ly:
+  jwt:
+    pubKeyPath: /home/liming/RsaAugorithm/rsa.pub
+    cookieName: LY_TOKEN

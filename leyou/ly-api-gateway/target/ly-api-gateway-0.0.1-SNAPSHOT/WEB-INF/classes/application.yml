@@ -1,0 +1,43 @@
+# 网关配置 将网关作为客户端,注册到eureka 后会自动获取注册到eureka上的服务
+# eureka 整合了ribbon和Hystrix
+server:
+  port: 8201
+spring:
+  application:
+    name: ly-api-gateway
+# 作为eureka客户端注册到eureka
+# zuul 整合ribbon
+# ribbon 可以细粒化配置
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8101/eureka
+    registry-fetch-interval-seconds: 5
+  instance:
+    ip-address: 127.0.0.1
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+# zuul 的配置
+zuul:
+  prefix: /api # 路由前缀
+  retryable: true
+  routes:
+    ly-item-service: /item/**
+  ignored-services: ly-upload # 忽略upload-service服务
+# ribbon 配置
+ribbon:
+  ConnectTimeout: 5000 # 连接超时时间(ms)
+  ReadTimeout: 5000 # 通信超时时间(ms)
+  OkToRetryOnAllOperations: true # 是否对所有操作重试
+  MaxAutoRetriesNextServer: 1 # 同一服务不同实例的重试次数
+  MaxAutoRetries: 1 # 同一实例的重试次数
+
+# Hystrix 断路器配置
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMillisecond: 10000 # 熔断超时时长：10000ms
+

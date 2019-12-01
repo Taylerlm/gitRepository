@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leyou.lmhitysu.item.goods.dao.IGoodsMapper">
+    <!--Goods-SPU-->
+    <resultMap id="spuMap" type="com.lmhitysu.leyou.item.model.Spu">
+        <result property="id" column="ID"/>
+        <result property="title" column="TITLE"/>
+        <result property="brandId" column="BRAND_ID"/>
+        <result property="cid1" column="CID1"/>
+        <result property="cid2" column="CID2"/>
+        <result property="cid3" column="CID3"/>
+        <result property="subTitle" column="SUB_TITLE"/>
+        <result property="saleable" column="SALEABLE"/>
+        <result property="valid" column="VALID"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="lastUpdateTime" column="LAST_UPDATE_TIME"/>
+    </resultMap>
+    <resultMap id="spuDetailMap" type="com.lmhitysu.leyou.item.model.SpuDetail">
+        <result property="spuId" column="SPU_ID"/>
+        <result property="description" column="DESCRIPTION"/>
+        <result property="specTemplate" column="SPEC_TEMPLATE"/>
+        <result property="specifications" column="SPECIFICATIONS"/>
+        <result property="packingList" column="PACKING_LIST"/>
+        <result property="afterService" column="AFTER_SERVICE"/>
+    </resultMap>
+    <resultMap id="skuMap" type="com.lmhitysu.leyou.item.model.Sku">
+        <result property="id" column="ID"/>
+        <result property="spuId" column="SPU_ID"/>
+        <result property="title" column="TITLE"/>
+        <result property="images" column="IMAGES"/>
+        <result property="price" column="PRICE"/>
+        <result property="indexes" column="INDEXES"/>
+        <result property="ownSpec" column="OWN_SPEC"/>
+        <result property="enable" column="ENABLE"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="lastUpdateTime" column="LAST_UPDATE_TIME"/>
+    </resultMap>
+    <resultMap id="skuStockMap" type="com.lmhitysu.leyou.item.model.Stock">
+        <result property="skuId" column="SKU_ID"/>
+        <result property="seckillStock" column="SECKILL_STOCK"/>
+        <result property="seckillTotal" column="SECKILL_TOTAL"/>
+        <result property="stock" column="STOCK"/>
+    </resultMap>
+    <sql id="spuFields">
+        <![CDATA[
+            ID,
+            TITLE,
+            BRAND_ID,
+            CID1,
+            CID2,
+            CID3,
+            SUB_TITLE,
+            SALEABLE,
+            VALID,
+            CREATE_TIME,
+            LAST_UPDATE_TIME
+        ]]>
+    </sql>
+    <sql id="spuDetailFields">
+        <![CDATA[
+            SPU_ID,
+            DESCRIPTION,
+            SPEC_TEMPLATE,
+            SPECIFICATIONS,
+            PACKING_LIST,
+            AFTER_SERVICE
+        ]]>
+    </sql>
+    <sql id="skuFields">
+        <![CDATA[
+            ID,
+            SPU_ID,
+            TITLE,
+            IMAGES,
+            PRICE,
+            INDEXES,
+            OWN_SPEC,
+            ENABLE,
+            CREATE_TIME,
+            LAST_UPDATE_TIME
+        ]]>
+    </sql>
+    <sql id="skuStockFields">
+        <![CDATA[
+            SKU_ID,
+            SECKILL_STOCK,
+            SECKILL_TOTAL,
+            STOCK
+        ]]>
+    </sql>
+    <!--查询商品Spu信息-->
+    <select id="findByProperty" parameterType="java.util.Map" resultMap="spuMap">
+        select <include refid="spuFields"/>
+        from tb_spu
+        <where>
+            <if test="key != null">
+                AND TITLE like concat('%',#{key},'%')
+            </if>
+            <if test="saleable != null">
+                AND SALEABLE = #{saleable}
+            </if>
+            <if test="id != null">
+                AND ID = #{id}
+            </if>
+        </where>
+        <if test="sortBy != null">
+            order by #{sortBy}
+        </if>
+        <if test="desc!=null and desc != false">
+            desc
+        </if>
+
+    </select>
+    <!--查询商品详情-->
+    <select id="findSpuDetailByProperty" parameterType="java.util.Map" resultMap="spuDetailMap">
+        select <include refid="spuDetailFields"/>
+        from tb_spu_detail
+        <where>
+            <if test="id != null">
+                AND SPU_ID = #{id}
+            </if>
+        </where>
+        <if test="sortBy != null">
+            order by #{sortBy}
+        </if>
+        <if test="desc!=null and desc != false">
+            desc
+        </if>
+
+    </select>
+    <!--查询商品sku信息-->
+    <select id="findSkuByProperty" parameterType="java.util.Map" resultMap="skuMap">
+        select <include refid="skuFields"/>
+        from tb_sku
+        <where>
+            <if test="id != null">
+                AND ID = #{id}
+            </if>
+            <if test="spuId != null">
+                AND SPU_ID = #{spuId}
+            </if>
+            <if test="createTime != null">
+                AND CREATE_TIME <![CDATA[ >= ]]> #{createTime}
+            </if>
+            <if test="lastUpdateTime != null">
+                AND LAST_UPDATE_TIME <![CDATA[ <= ]]> #{lastUpdateTime}
+            </if>
+        </where>
+        <if test="sortBy != null">
+            order by #{sortBy}
+        </if>
+        <if test="desc!=null and desc != false">
+            desc
+        </if>
+
+    </select>
+    <!--查询商品skuStock　库存信息-->
+    <select id="findSkuStockByProperty" parameterType="java.util.Map" resultMap="skuStockMap">
+        select <include refid="skuStockFields"/>
+        from tb_stock
+        <where>
+            <if test="skuId != null">
+                AND SKU_ID = #{skuId}
+            </if>
+        </where>
+        <if test="sortBy != null">
+            order by #{sortBy}
+        </if>
+        <if test="desc!=null and desc != false">
+            desc
+        </if>
+
+    </select>
+    <!--保存商品spu信息-->
+    <insert id="saveSpu" parameterType="com.lmhitysu.leyou.item.model.Spu" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_spu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="title !=null">
+                TITLE,
+            </if>
+
+            <if test="brandId !=null">
+                BRAND_ID,
+            </if>
+            <if test="cid1 !=null">
+                CID1,
+            </if>
+            <if test="cid2 !=null">
+                CID2,
+            </if>
+            <if test="cid3 !=null">
+                CID3,
+            </if>
+            <if test="subTitle !=null">
+                SUB_TITLE,
+            </if>
+            <if test="saleable !=null">
+                SALEABLE,
+            </if>
+            <if test="valid !=null">
+                VALID,
+            </if>
+            <if test="createTime !=null">
+                CREATE_TIME,
+            </if>
+            <if test="lastUpdateTime !=null">
+                LAST_UPDATE_TIME,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides="," >
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="title !=null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="brandId !=null">
+                #{brandId,jdbcType=BIGINT},
+            </if>
+            <if test="cid1 !=null">
+                #{cid1,jdbcType=BIGINT},
+            </if>
+            <if test="cid2 !=null">
+                #{cid2,jdbcType=BIGINT},
+            </if>
+            <if test="cid3 !=null">
+                #{cid3,jdbcType=BIGINT},
+            </if>
+            <if test="subTitle !=null">
+                #{subTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="saleable !=null">
+                #{saleable,jdbcType=TINYINT},
+            </if>
+            <if test="valid !=null">
+                #{valid,jdbcType=TINYINT},
+            </if>
+            <if test="createTime !=null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="lastUpdateTime !=null">
+                #{lastUpdateTime,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+    <!--保存商品spu详情信息-->
+    <insert id="saveSpuDetail" parameterType="com.lmhitysu.leyou.item.model.SpuDetail" >
+        insert into tb_spu_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="spuId != null">
+                SPU_ID,
+            </if>
+            <if test="description !=null">
+                DESCRIPTION,
+            </if>
+
+            <if test="specifications !=null">
+                SPECIFICATIONS,
+            </if>
+            <if test="packingList !=null">
+                PACKING_LIST,
+            </if>
+            <if test="afterService !=null">
+                AFTER_SERVICE,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides="," >
+            <if test="spuId != null">
+                #{spuId,jdbcType=BIGINT},
+            </if>
+            <if test="description !=null">
+                #{description,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="specifications !=null">
+                #{specifications,jdbcType=VARCHAR},
+            </if>
+            <if test="packingList !=null">
+                #{packingList,jdbcType=VARCHAR},
+            </if>
+            <if test="afterService !=null">
+                #{afterService,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <!--保存商品sku信息-->
+    <insert id="saveSku" parameterType="com.lmhitysu.leyou.item.model.Sku" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_sku
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="spuId !=null">
+                SPU_ID,
+            </if>
+
+            <if test="title !=null">
+                TITLE,
+            </if>
+            <if test="images !=null">
+                IMAGES,
+            </if>
+            <if test="price !=null">
+                PRICE,
+            </if>
+            <if test="indexes !=null">
+                INDEXES,
+            </if>
+            <if test="ownSpec !=null">
+                OWN_SPEC,
+            </if>
+            <if test="enable !=null">
+                ENABLE,
+            </if>
+            <if test="createTime !=null">
+                CREATE_TIME,
+            </if>
+            <if test="lastUpdateTime !=null">
+                LAST_UPDATE_TIME,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides="," >
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="spuId !=null">
+                #{spuId,jdbcType=BIGINT},
+            </if>
+            <if test="title !=null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="images !=null">
+                #{images,jdbcType=VARCHAR},
+            </if>
+            <if test="price !=null">
+                #{price,jdbcType=BIGINT},
+            </if>
+            <if test="indexes !=null">
+                #{indexes,jdbcType=VARCHAR},
+            </if>
+            <if test="ownSpec !=null">
+                #{ownSpec,jdbcType=VARCHAR},
+            </if>
+            <if test="enable !=null">
+                #{enable,jdbcType=TINYINT},
+            </if>
+            <if test="createTime !=null">
+                #{createTime,jdbcType=DATE},
+            </if>
+            <if test="lastUpdateTime !=null">
+                #{lastUpdateTime,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+    <!--保存商品skuStock sku的库存详情信息-->
+    <insert id="saveSkuStock" parameterType="com.lmhitysu.leyou.item.model.Stock" >
+        insert into tb_stock
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="skuId != null">
+                SKU_ID,
+            </if>
+            <if test="seckillStock !=null">
+                SECKILL_STOCK,
+            </if>
+
+            <if test="seckillTotal !=null">
+                SECKILL_TOTAL,
+            </if>
+            <if test="stock !=null">
+                STOCK,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides="," >
+            <if test="skuId != null">
+                #{skuId,jdbcType=BIGINT},
+            </if>
+            <if test="seckillStock !=null">
+                #{seckillStock,jdbcType=BIGINT},
+            </if>
+            <if test="seckillTotal !=null">
+                #{seckillTotal,jdbcType=BIGINT},
+            </if>
+            <if test="stock !=null">
+                #{stock,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+</mapper>

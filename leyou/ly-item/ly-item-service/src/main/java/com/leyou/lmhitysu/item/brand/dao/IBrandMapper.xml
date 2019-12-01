@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leyou.lmhitysu.item.brand.dao.IBrandMapper">
+    <!--BRAND-->
+    <resultMap id="brandMap" type="com.lmhitysu.leyou.item.model.Brand">
+        <result property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="image" column="IMAGE"/>
+        <result property="letter" column="LETTER"/>
+    </resultMap>
+    <!--CategoryBrandRel-->
+    <resultMap id="categoryBrandRelMap" type="com.leyou.lmhitysu.common.model.CategoryBrandRel">
+        <result property="categoryId" column="CATEGORY_ID"/>
+        <result property="brandId" column="BRAND_ID"/>
+    </resultMap>
+    <sql id="brandFields">
+        <![CDATA[
+            ID,
+            NAME,
+            IMAGE,
+            LETTER
+        ]]>
+    </sql>
+    <sql id="categoryBrandFields">
+        <![CDATA[
+            CATEGORY_ID,
+            BRAND_ID
+        ]]>
+    </sql>
+    <select id="findBrandPages" parameterType="java.util.Map" resultMap="brandMap">
+        select <include refid="brandFields"/>
+        from tb_brand
+        <where>
+            <if test="key != null">
+                AND NAME like concat('%',#{key},'%')
+            </if>
+        </where>
+        <if test="sortBy != null">
+            order by #{sortBy}
+        </if>
+        <if test="desc!=null and desc != false">
+            desc
+        </if>
+    </select>
+    <!--不分页全部查询-->
+    <select id="findByProperty" parameterType="java.util.Map" resultMap="brandMap">
+        select <include refid="brandFields"/>
+        from tb_brand
+        <where>
+            <if test="id != null">
+                AND ID = #{id}
+            </if>
+            <if test="name != null">
+                AND NAME like concat('%',#{name},'%')
+            </if>
+            <if test="letter != null">
+                AND LETTER = #{letter}
+            </if>
+            <if test="ids != null">
+                AND ID IN
+                <foreach collection="ids" item="item" open="(" close=")" separator=",">#{item}</foreach>
+            </if>
+        </where>
+        <if test="sortBy != null">
+            order by #{sortBy}
+        </if>
+        <if test="desc!=null and desc != false">
+            desc
+        </if>
+    </select>
+    <!--保存品牌信息-->
+    <insert id="saveBrand" parameterType="com.lmhitysu.leyou.item.model.Brand" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_brand
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="name !=null">
+                NAME,
+            </if>
+            <if test="image !=null">
+                IMAGE,
+            </if>
+            <if test="letter !=null">
+                LETTER,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides="," >
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name !=null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="image !=null">
+                #{image,jdbcType=VARCHAR},
+            </if>
+            <if test="letter !=null">
+                #{letter,jdbcType=CHAR},
+            </if>
+        </trim>
+    </insert>
+    <!--保存品牌分类信息-->
+    <insert id="saveCategoryBrand" parameterType="java.util.List">
+        insert into tb_category_brand (category_id,brand_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.category_id,jdbcType=BIGINT},#{item.brand_id,jdbcType=BIGINT})
+        </foreach>
+
+    </insert>
+    <!--根据id查询关系表-->
+    <select id="findCategoryByBrandIdCategoryId" parameterType="java.util.Map" resultMap="categoryBrandRelMap">
+        select <include refid="categoryBrandFields"/>
+        from tb_category_brand
+        <where>
+            <if test="categoryId != null">
+                AND CATEGORY_ID = #{categoryId}
+            </if>
+            <if test="brandId != null">
+                AND BRAND_ID = #{brandId}
+            </if>
+        </where>
+        <if test="sortBy != null">
+            order by #{sortBy}
+        </if>
+        <if test="desc!=null and desc != false">
+            desc
+        </if>
+    </select>
+
+    <!--关联查询获取品牌分类下所有品牌-->
+    <select id="findBrandByCid" parameterType="java.lang.Long" resultMap="brandMap">
+        select <include refid="brandFields"/>
+        from tb_brand tb
+        left join tb_category_brand tcb on tcb.brand_id = tb.id
+        where tcb.category_id = #{cid}
+    </select>
+</mapper>

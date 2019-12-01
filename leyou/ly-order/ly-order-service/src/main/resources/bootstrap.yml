@@ -1,9 +1,0 @@
-
-spring:
-  cloud:
-    config:
-      profile: dev
-      name: order,application
-      uri: http://127.0.0.1:10011
-  application:
-    name: order
